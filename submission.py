@@ -31,7 +31,6 @@ def create_nqueens_csp(n: int = 8) -> CSP:
     domain = []
     for i in range(n):
         domain.append(i+1)
-    print(domain)
     vars = []
     col = {}
     for i in range(n):
@@ -283,7 +282,19 @@ class BacktrackingSearch:
             #       to satisfy all constraints.
             # Hint: for ties, choose the variable with lowest index in self.csp.variables
             # BEGIN_YOUR_CODE (our solution is 8 lines of code, but don't worry if you deviate from this)
-            raise Exception("Not implemented yet")
+            best_values = float('inf')
+            best_var = None
+            for var in self.csp.variables:
+                if var not in assignment:
+                    num_values = 0
+                    for val in self.domains[var]:
+                        if self.satisfies_constraints(assignment, var, val):
+                            num_values += 1
+                    if best_values>num_values:
+                        best_values = num_values
+                        best_var = var
+            
+            return best_var
             # END_YOUR_CODE
 
     def apply_arc_consistency(self, var) -> None:
