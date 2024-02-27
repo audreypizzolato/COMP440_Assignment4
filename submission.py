@@ -28,9 +28,31 @@ def create_nqueens_csp(n: int = 8) -> CSP:
     """
     csp = CSP()
     # Problem 1a
-    # BEGIN_YOUR_CODE (our solution is 7 lines of code, but don't worry if you deviate from this)
-    raise Exception("Not implemented yet")
-    # END_YOUR_CODE
+    domain = []
+    for i in range(n):
+        domain.append(i+1)
+    print(domain)
+    vars = []
+    col = {}
+    for i in range(n):
+        vars.append(f'Q_{i+1}')
+        csp.add_variable(f'Q_{i+1}', domain)
+        col[f'Q_{i+1}']=i+1
+
+    def row_constraint(x, y):
+        return x != y
+    def are_different(v1, v2):
+        return v1!=v2
+    def diagonal_constraint(x, y):
+        return abs(x - y) != abs(col_diff)
+    
+    for v1 in vars:
+        for v2 in vars:
+            if are_different(v1, v2):
+                col_diff = col[v1] - col[v2]
+                csp.add_binary_factor(v1, v2, row_constraint)
+                csp.add_binary_factor(v1, v2, diagonal_constraint)
+    
     return csp
 
 # A backtracking algorithm that solves weighted CSP.
