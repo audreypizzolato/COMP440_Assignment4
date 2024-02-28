@@ -595,7 +595,26 @@ class SchedulingCSPConstructor:
         #                       ...
         #               ...
         # BEGIN_YOUR_CODE (our solution is 21 lines of code, but don't worry if you deviate from this)
-        raise Exception("Not implemented yet")
+
+        for quarter in self.profile.quarters:
+            unit_vars = []
+            for request in self.profile.requests:
+                for cid in request.cids:
+                    unit_var = (cid, quarter)
+                    valid_units = [0] + list(range(self.bulletin.courses[cid].minUnits,
+                                                    self.bulletin.courses[cid].maxUnits + 1))
+                    csp.add_variable(unit_var, valid_units)
+
+                    def unit_constraint(course_taken, units):
+                        if course_taken == cid:
+                            return units in valid_units and units != 0
+                        return units == 0
+                    
+                    csp.add_binary_factor((request, quarter), unit_var, unit_constraint)
+                    unit_vars.append(unit_var)
+
+            sum_var = create_sum_variable(csp, f"sum_units_{quarter}", unit_vars, self.profile.maxUnits)
+            csp.add_unary_factor(sum_var, lambda total_units: self.profile.minUnits <= total_units <= self.profile.maxUnits)
         # END_YOUR_CODE
 
     def add_all_additional_constraints(self, csp: CSP) -> None:
