@@ -413,6 +413,7 @@ class SchedulingCSPConstructor:
         for request in self.profile.requests:
             for quarter in self.profile.quarters:
                 csp.add_variable((request, quarter), request.cids + [None])
+                
 
     def add_bulletin_constraints(self, csp: CSP) -> None:
         """
@@ -474,7 +475,15 @@ class SchedulingCSPConstructor:
         # Hint: To check which quarters are specified by a request variable
         #       named `request`, use request.quarters (NOT self.profile.quarters).
         # BEGIN_YOUR_CODE (our solution is 5 lines of code, but don't worry if you deviate from this)
-        raise Exception("Not implemented yet")
+        def quarter_constraint(cid, req, qtr):
+            return cid is None or qtr in req.quarters
+        
+        for request in self.profile.requests:
+            if request.quarters != None:
+                for quarter in self.profile.quarters:
+                    csp.add_unary_factor((request, quarter), lambda cid: quarter_constraint(cid, request, quarter ))
+
+        
         # END_YOUR_CODE
 
     def add_request_weights(self, csp: CSP) -> None:
